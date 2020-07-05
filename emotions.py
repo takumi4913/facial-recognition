@@ -12,37 +12,43 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from datetime import datetime
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+from PIL import Image
+
+os.makedirs('emotions',exist_ok=True)
 
 #------------------------------------------------------------------------------
 # 画像を読み込む。
-img = cv2.imread("sunglass.jpg")
+#img=Image.open("sunglass.jpg").convert('RGB').save('sunglass_rgba')
+
+#img = cv2.imread("sunglass_rgba.jpg")
 
 # グレースケールに変換する。
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # 2値化する。
-thresh, binary = cv2.threshold(gray, 230, 255, cv2.THRESH_BINARY_INV)
+#thresh, binary = cv2.threshold(gray, 230, 255, cv2.THRESH_BINARY_INV)
 
 # 輪郭を抽出する。
-contours, hierarchy = cv2.findContours(
-    binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-)
+#contours, hierarchy = cv2.findContours(
+#    binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+#)
 
 # マスクを作成する。
-mask = np.zeros_like(binary)
+#mask = np.zeros_like(binary)
 
 # 輪郭内部 (透明化しない画素) を255で塗りつぶす。
-cv2.drawContours(mask, contours, -1, color=255, thickness=-1)
+#cv2.drawContours(mask, contours, -1, color=255, thickness=-1)
 
 # RGBA に変換する。
-rgba = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
+#rgba = cv2.cvtColor(img, cv2.COLOR_RGB2RGBA)
 
 # マスクをアルファチャンネルに設定する。
-rgba[..., 3] = mask
+#rgba[..., 3] = mask
 
-# 保存する。
 #cv2.imwrite(r"result.png", rgba)
+
+#im=Image.open("result.jpg").convert('RGB')
 #-----------------------------------------------------------------------------
 
 # Create the model
@@ -126,82 +132,102 @@ while True:
         maxindex = int(np.argmax(prediction))
         
         print(maxindex)
-
-        #img1 = cv2.imread('img/sad/5.png')
-        #ret, img = cap.read()
-        #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        #frame=image(img, (x, y, x+w, y+h))
-
-        if maxindex == 0:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
-                ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-                #ret, img = cap.read()
-                #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #frame=mosaic(img, (x, y, x+w, y+h), 10)
             
-        elif maxindex == 1:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
+        if maxindex == 0:
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+
+                img1 = cv2.imread('img/angry/angry.png')
                 ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+                frame=image(img, (x, y, x+w, y+h))
+        
+        
+        elif maxindex == 1:
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+
+                img1 = cv2.imread('img/disgusted/disgusted.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
  
         elif maxindex ==2:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+
+                img1 = cv2.imread('img/fearful/fearful.png')
                 ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+                frame=image(img, (x, y, x+w, y+h))
+        
 
         elif maxindex ==3:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+                
+                img1 = cv2.imread('img/happy/happy.png')
                 ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))       
-
+                frame=image(img, (x, y, x+w, y+h))
+        
         elif maxindex == 4:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+
+                img1 = cv2.imread('img/sad/sad.jpg')
                 ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+                frame=image(img, (x, y, x+w, y+h))
+        
 
         elif maxindex == 5:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
-                ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
   
-                #img1 = cv2.imread('img/sad/5.png')
-                #ret, img = cap.read()
-                #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #frame=image(img, (x, y, x+w, y+h))
+                img1 = cv2.imread('img/sad/sad.jpg')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
         
         elif maxindex == 6:
-            eye = eyes.detectMultiScale(roi_gray)
-            for (ex, ey, ew, eh) in eye:
+            # eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+
+                img1 = cv2.imread('img/surprised/surprised.png')
                 ret, img = cap.read()
-                #img1 = cv2.imread('img/fearful/2.png')
-                img1 = rgba
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+                frame=image(img, (x, y, x+w, y+h))
+        
 
 
     cv2.imshow('Video', cv2.resize(frame,(600,460),interpolation = cv2.INTER_CUBIC))
