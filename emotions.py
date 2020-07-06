@@ -17,6 +17,128 @@ from PIL import Image
 
 os.makedirs('emotions',exist_ok=True)
 
+# Create the model
+model = Sequential()
+
+model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
+model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Flatten())
+model.add(Dense(1024, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(7, activation='softmax'))
+
+# emotions will be displayed on your face from the webcam feed
+model.load_weights('date/model.h5')
+
+# prevents openCL usage and unnecessary logging messages
+cv2.ocl.setUseOpenCL(False)
+
+# dictionary which assigns each label an emotion (alphabetical order)
+emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
+
+# add
+face_cascade = cv2.CascadeClassifier('date/haarcascade_frontalface_alt.xml')
+facecasc = cv2.CascadeClassifier('date/haarcascade_frontalface_default.xml')
+#eyes = cv2.CascadeClassifier('date/haarcascade_righteye_2splits.xml')
+
+# image
+def image(img, rect):
+    (x1, y1, x2, y2) = rect
+    w = x2 - x1
+    h = y2 - y1
+
+    img_face = cv2.resize(img1, (w, h))
+    img2 = img.copy()
+    img2[y1:y2, x1:x2] = img_face
+    return img2
+
+cou0=cou1=cou2=cou3=cou4=cou5=cou6=cou7=0
+
+cap = cv2.VideoCapture(0)
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
+    faces = face_cascade.detectMultiScale(gray, 1.5, 3)
+    
+    for (x, y, w, h) in faces:
+        
+        roi_gray = gray[y:y + h, x:x + w]
+        cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
+        prediction = model.predict(cropped_img)
+        maxindex = int(np.argmax(prediction))
+        
+        print(maxindex)
+            
+        if maxindex == 0:
+                img1 = cv2.imread('img/angry/angry.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+         
+        elif maxindex == 1:
+                img1 = cv2.imread('img/disgusted/disgusted.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
+        elif maxindex ==2:
+                img1 = cv2.imread('img/fearful/fearful.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
+        elif maxindex ==3:
+                img1 = cv2.imread('img/happy/happy.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
+        elif maxindex == 4:
+                img1 = cv2.imread('img/neutral/neutral.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
+        elif maxindex == 5:
+                img1 = cv2.imread('img/sad/sad.jpg')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
+        elif maxindex == 6:
+                img1 = cv2.imread('img/surprised/surprised.png')
+                ret, img = cap.read()
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                frame=image(img, (x, y, x+w, y+h))
+        
+    cv2.imshow('Video', cv2.resize(frame,(600,460),interpolation = cv2.INTER_CUBIC))
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+# eye = eyes.detectMultiScale(roi_gray)
+            # for (ex, ey, ew, eh) in eye:
+                # ret, img = cap.read()
+                # img1 = cv2.imread('img/fearful/2.png')
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
+
+
 #------------------------------------------------------------------------------
 # 画像を読み込む。
 #img=Image.open("sunglass.jpg").convert('RGB').save('sunglass_rgba')
@@ -51,188 +173,16 @@ os.makedirs('emotions',exist_ok=True)
 #im=Image.open("result.jpg").convert('RGB')
 #-----------------------------------------------------------------------------
 
-# Create the model
-model = Sequential()
-
-model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
-model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-
-model.add(Flatten())
-model.add(Dense(1024, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(7, activation='softmax'))
-
-
-# emotions will be displayed on your face from the webcam feed
-model.load_weights('date/model.h5')
-
-# prevents openCL usage and unnecessary logging messages
-cv2.ocl.setUseOpenCL(False)
-
-# dictionary which assigns each label an emotion (alphabetical order)
-emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
-
-# add
-face_cascade = cv2.CascadeClassifier('date/haarcascade_frontalface_alt.xml')
-facecasc = cv2.CascadeClassifier('date/haarcascade_frontalface_default.xml')
-eyes = cv2.CascadeClassifier('date/haarcascade_righteye_2splits.xml')
-
 # mosaic
-def mosaic(img, rect, size):
-    (x1, y1, x2, y2) = rect
-    w = x2 - x1
-    h = y2 - y1
-    i_rect = img[y1:y2, x1:x2]
+# def mosaic(img, rect, size):
+#     (x1, y1, x2, y2) = rect
+#     w = x2 - x1
+#     h = y2 - y1
+#     i_rect = img[y1:y2, x1:x2]
 
-    i_small = cv2.resize(i_rect, (size, size))
-    i_mos = cv2.resize(i_small, (w, h), interpolation=cv2.INTER_AREA)
+#     i_small = cv2.resize(i_rect, (size, size))
+#     i_mos = cv2.resize(i_small, (w, h), interpolation=cv2.INTER_AREA)
 
-    img2 = img.copy()
-    img2[y1:y2, x1:x2] = i_mos
-    return img2
-
-# image
-def image(img, rect):
-    (x1, y1, x2, y2) = rect
-    w = x2 - x1
-    h = y2 - y1
-
-    img_face = cv2.resize(img1, (w, h))
-    #img_face = cv2.resize(img, (w, h))
-    img2 = img.copy()
-    img2[y1:y2, x1:x2] = img_face
-    return img2
-
-cou0=cou1=cou2=cou3=cou4=cou5=cou6=cou7=0
-
-cap = cv2.VideoCapture(0)
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        break
-    
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
-    faces = face_cascade.detectMultiScale(gray, 1.5, 3)
-    
-
-    for (x, y, w, h) in faces:
-        
-        roi_gray = gray[y:y + h, x:x + w]
-        cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
-        prediction = model.predict(cropped_img)
-        maxindex = int(np.argmax(prediction))
-        
-        print(maxindex)
-            
-        if maxindex == 0:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-
-                img1 = cv2.imread('img/angry/angry.png')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
-        
-        elif maxindex == 1:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-
-                img1 = cv2.imread('img/disgusted/disgusted.png')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
- 
-        elif maxindex ==2:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-
-                img1 = cv2.imread('img/fearful/fearful.png')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
-
-        elif maxindex ==3:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-                
-                img1 = cv2.imread('img/happy/happy.png')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
-        elif maxindex == 4:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-
-                img1 = cv2.imread('img/sad/sad.jpg')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
-
-        elif maxindex == 5:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-  
-                img1 = cv2.imread('img/sad/sad.jpg')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
-        elif maxindex == 6:
-            # eye = eyes.detectMultiScale(roi_gray)
-            # for (ex, ey, ew, eh) in eye:
-                # ret, img = cap.read()
-                # img1 = cv2.imread('img/fearful/2.png')
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=image(img,((ex+x)-20,(ey+y)+30,(ex+ew+x)-20,(ey+eh+y)+30))
-
-                img1 = cv2.imread('img/surprised/surprised.png')
-                ret, img = cap.read()
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                frame=image(img, (x, y, x+w, y+h))
-        
-
-
-    cv2.imshow('Video', cv2.resize(frame,(600,460),interpolation = cv2.INTER_CUBIC))
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+#     img2 = img.copy()
+#     img2[y1:y2, x1:x2] = i_mos
+#     return img2
