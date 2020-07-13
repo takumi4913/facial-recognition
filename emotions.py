@@ -9,6 +9,8 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from datetime import datetime
+#add
+#from __future__ import print_function
 
 import os
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -17,6 +19,10 @@ from PIL import Image
 import time
 
 os.makedirs('emotions',exist_ok=True)
+
+#add
+raw_input=input
+input_alpha=0.5
 
 # Create the model
 model = Sequential()
@@ -56,7 +62,8 @@ def paste_image(img, rect):
     wid = x_br - x_tl
     hei = y_br - y_tl
 
-    img_face = cv2.resize(input_img, (wid, hei))
+    #img_face = cv2.resize(input_img, (wid, hei))
+    img_face = cv2.resize(add_img, (wid, hei))
     paste_img = img.copy()
     paste_img[y_tl:y_br, x_tl:x_br] = img_face
     return paste_img
@@ -67,10 +74,13 @@ def apply_mosaic(mosaic_img):
     return cv2.resize(small_mosaic_image, mosaic_img.shape[:2][::-1], interpolation=cv2.INTER_NEAREST)
 
 cap = cv2.VideoCapture(0)
+
 while True:
     ret, frame = cap.read()
     if not ret:
         break
+    #add
+    cv2.imwrite(r"user.png",frame)
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     recognized_faces = face_cascade_default.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
@@ -93,44 +103,94 @@ while True:
             
         if maxindex == 0:
                 input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
          
         elif maxindex == 1:
-                input_img = cv2.imread('img/disgusted/disgusted.png')
+                # input_img = cv2.imread('img/disgusted/disgusted.png')
+                # ret, img = cap.read()
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=paste_image(img, (x, y, x+w, y+h))
+                input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex ==2:
-                input_img = cv2.imread('img/fearful/fearful.png')
+                # input_img = cv2.imread('img/fearful/fearful.png')
+                # ret, img = cap.read()
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=paste_image(img, (x, y, x+w, y+h))
+
+                input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex ==3:
-                input_img = cv2.imread('img/happy/happy.png')
+                # input_img = cv2.imread('img/happy/happy.png')
+                # ret, img = cap.read()
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=paste_image(img, (x, y, x+w, y+h))
+
+                input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 4:
-                input_img = cv2.imread('img/neutral/neutral.png')
+                # input_img = cv2.imread('img/neutral/neutral.png')
+                # ret, img = cap.read()
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=paste_image(img, (x, y, x+w, y+h))
+
+                input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 5:
-                input_img = cv2.imread('img/sad/sad.jpg')
+                # input_img = cv2.imread('img/sad/sad.jpg')
+                # ret, img = cap.read()
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=paste_image(img, (x, y, x+w, y+h))
+
+                input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 6:
-                input_img = cv2.imread('img/surprised/surprised.png')
+                # input_img = cv2.imread('img/surprised/surprised.png')
+                # ret, img = cap.read()
+                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                # frame=paste_image(img, (x, y, x+w, y+h))
+
+                input_img = cv2.imread('img/angry/angry.png')
+                input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                #add
+                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
     cv2.imshow('Video', cv2.resize(frame,(600,460),interpolation = cv2.INTER_CUBIC))
