@@ -31,6 +31,7 @@ for i in range(6):
     beta = (1.0 - alpha)
     dst = cv2.addWeighted(src0, alpha, src[i], beta, 0.0)
     cv2.imshow('dst',dst)
+    cv2.imwrite('img/add',i)
     cv2.waitKey(0)
 
 cv2.destroyAllWindows()
