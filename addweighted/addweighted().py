@@ -6,7 +6,7 @@ src0 = cv2.imread(cv2.samples.findFile('user.png'))
 src = [cv2.imread(cv2.samples.findFile('0.png')),
         cv2.imread(cv2.samples.findFile('1.png')),
         cv2.imread(cv2.samples.findFile('2.png')),
-        cv2.imread(cv2.samples.findFile('3.png')),
+        cv2.imread(cv2.samples.findFile('3-1.png')),
         cv2.imread(cv2.samples.findFile('5.png')),
         cv2.imread(cv2.samples.findFile('6.png')),]
 
