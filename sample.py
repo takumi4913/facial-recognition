@@ -1,22 +1,39 @@
+#OpenCVのインポート
 import cv2
-import numpy as np
+ 
+#カスケード型分類器に使用する分類器のデータ（xmlファイル）を読み込み
+cascade = cv2.CascadeClassifier("date/haarcascade_frontalface_default.xml")
+ 
+#画像ファイルの読み込み
+cap = cv2.VideoCapture(0)
 
-img1 = cv2.imread("Happy.png")
-img2 = cv2.imread("sunglass_second.jpg")
-img2 = cv2.resize(img2, dsize=None, fx=1, fy=0.8)
+while(True):
+    ret, frame = cap.read()
+    cv2.imshow("frame",frame)
 
-rows, cols, channels = img2.shape
-roi = img1[:rows, :cols]
+    key=cv2.waitKey(1)&0xFF
 
-img2gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    if key==ord("q"):
+        break
 
-mask = cv2.threshold(img2gray, 200, 255, cv2.THRESH_BINARY_INV)[1]
-mask_inv = cv2.bitwise_not(mask)
+    if key==ord("s"):
+        cv2.imwrite("photo.jpg",frame)
 
-img1_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
-img2_fg = cv2.bitwise_and(img2, img2, mask=mask)
+        img_gray = cv2.imread("photo.jpg")
+        img_g=cv2.cvtColor(img_gray, cv2.COLOR_BGR2GRAY)
+    
+        #カスケード型分類器を使用して画像ファイルから顔部分を検出する
+        face = cascade.detectMultiScale(img_g)
+        
+        #顔の座標を表示する
+        print(face)
+        
+        #顔部分を切り取る
+        for x,y,w,h in face:
+            face_cut = img_g[y:y+h, x:x+w]
+        
+        # face_cut_color=cv2.cvtColor(face_cut,cv2.COLOR_GRAY2BGR)
 
-dst = cv2.add(img1_bg, img2_fg)
-img1[:rows, :cols] = dst
-
-cv2.imwrite('result.png', img1)
+        #画像の出力
+        cv2.imwrite('face_cut.jpg', face_cut)
+    

@@ -102,12 +102,13 @@ while True:
         print(maxindex)
             
         if maxindex == 0:
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 #add
-                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
          
         elif maxindex == 1:
@@ -115,12 +116,13 @@ while True:
                 # ret, img = cap.read()
                 # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 # frame=paste_image(img, (x, y, x+w, y+h))
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 #add
-                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex ==2:
@@ -129,7 +131,8 @@ while True:
                 # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 # frame=paste_image(img, (x, y, x+w, y+h))
 
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -143,12 +146,13 @@ while True:
                 # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 # frame=paste_image(img, (x, y, x+w, y+h))
 
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 #add
-                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 4:
@@ -157,12 +161,13 @@ while True:
                 # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 # frame=paste_image(img, (x, y, x+w, y+h))
 
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 #add
-                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 5:
@@ -171,12 +176,13 @@ while True:
                 # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 # frame=paste_image(img, (x, y, x+w, y+h))
 
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 #add
-                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 6:
@@ -185,12 +191,13 @@ while True:
                 # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 # frame=paste_image(img, (x, y, x+w, y+h))
 
-                input_img = cv2.imread('img/angry/angry.png')
+                # input_img = cv2.imread('img/angry/angry.png')
+                input_img = cv2.imread('sample.jpg')
                 input_img_2=cv2.imread("user.png")
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 #add
-                add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
                 frame=paste_image(img, (x, y, x+w, y+h))
         
     cv2.imshow('Video', cv2.resize(frame,(600,460),interpolation = cv2.INTER_CUBIC))
