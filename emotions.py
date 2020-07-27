@@ -1,6 +1,9 @@
 import numpy as np
 import argparse
 import cv2
+import os
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import time
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten
@@ -9,20 +12,9 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from datetime import datetime
-#add
-#from __future__ import print_function
-
-import os
-#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from PIL import Image
 
-import time
-
 os.makedirs('emotions',exist_ok=True)
-
-#add
-raw_input=input
-input_alpha=0.5
 
 # Create the model
 model = Sequential()
@@ -62,8 +54,7 @@ def paste_image(img, rect):
     wid = x_br - x_tl
     hei = y_br - y_tl
 
-    #img_face = cv2.resize(input_img, (wid, hei))
-    img_face = cv2.resize(add_img, (wid, hei))
+    img_face = cv2.resize(add_faces, (wid, hei))
     paste_img = img.copy()
     paste_img[y_tl:y_br, x_tl:x_br] = img_face
     return paste_img
@@ -79,125 +70,105 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
-    #add
-    cv2.imwrite(r"user.png",frame)
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     recognized_faces = face_cascade_default.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
     recognized_faces = face_cascade_alt.detectMultiScale(gray, 1.5, 3)
     
-    frame = frame .copy()
-    frame = apply_mosaic(frame)
+    key=cv2.waitKey(1)&0xFF
+    if key==ord("m"):
+            frame = frame .copy()
+            frame = apply_mosaic(frame)
+
+    #face_cut
+    cv2.imwrite("user_face.png",frame)
+    user_faces=cv2.imread("user_face.png")
+    user_faces_gray=cv2.cvtColor(user_faces, cv2.COLOR_BGR2GRAY)
+    faces=face_cascade_default.detectMultiScale(user_faces_gray)
+    for x,y,w,h in faces:
+            face_cut=user_faces[y:y+h,x:x+w]
+
+    cv2.imwrite("face_cut_user.png",face_cut)
+    face_cut_re = cv2.imread('face_cut_user.png')
+    #add
+    height, width, channels = face_cut_re.shape[:3]
+    #face_cut_re = img
+    #face_cut_re = cv2.resize(img,(225, 225))
+
 
     for (x, y, w, h) in recognized_faces:
 
         roi_gray = gray[y:y + h, x:x + w]
         cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
         prediction = model.predict(cropped_img)
-        for i in range(0, 1, 1):
-            time.sleep(0.3)
-            maxindex = int(np.argmax(prediction))
-        #maxindex = int(np.argmax(prediction))
+        # for i in range(0, 1, 1):
+        #     time.sleep(0.3)
+        #     maxindex = int(np.argmax(prediction))
+        maxindex = int(np.argmax(prediction))
         
         print(maxindex)
             
         if maxindex == 0:
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/0.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
-         
+
         elif maxindex == 1:
-                # input_img = cv2.imread('img/disgusted/disgusted.png')
-                # ret, img = cap.read()
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=paste_image(img, (x, y, x+w, y+h))
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/user.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex ==2:
-                # input_img = cv2.imread('img/fearful/fearful.png')
-                # ret, img = cap.read()
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=paste_image(img, (x, y, x+w, y+h))
-
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/1.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex ==3:
-                # input_img = cv2.imread('img/happy/happy.png')
-                # ret, img = cap.read()
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=paste_image(img, (x, y, x+w, y+h))
-
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/2.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 4:
-                # input_img = cv2.imread('img/neutral/neutral.png')
-                # ret, img = cap.read()
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=paste_image(img, (x, y, x+w, y+h))
-
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/3.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 5:
-                # input_img = cv2.imread('img/sad/sad.jpg')
-                # ret, img = cap.read()
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=paste_image(img, (x, y, x+w, y+h))
-
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/5.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
         
         elif maxindex == 6:
-                # input_img = cv2.imread('img/surprised/surprised.png')
-                # ret, img = cap.read()
-                # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                # frame=paste_image(img, (x, y, x+w, y+h))
-
-                # input_img = cv2.imread('img/angry/angry.png')
-                input_img = cv2.imread('sample.jpg')
-                input_img_2=cv2.imread("user.png")
+                input_img = cv2.imread('addweighted/6.png')
+                input_img_re = cv2.resize(input_img,(height, width))
                 ret, img = cap.read()
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                #add
-                add_img = cv2.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+                add_faces=cv2.addWeighted(input_img_re,0.2,face_cut_re,0.8,0.0)
+
                 frame=paste_image(img, (x, y, x+w, y+h))
         
     cv2.imshow('Video', cv2.resize(frame,(600,460),interpolation = cv2.INTER_CUBIC))
@@ -263,3 +234,49 @@ cv2.destroyAllWindows()
 
 # cv2.imwrite(r"result.png", rgba)
 #-----------------------------------------------------------------------------
+#import cv2
+#alpha = 0.5
+#
+## 画像取り込み
+#src0 = cv2.imread(cv2.samples.findFile('user.png'))
+#src = [cv2.imread(cv2.samples.findFile('0.png')),
+#        cv2.imread(cv2.samples.findFile('1.png')),
+#        cv2.imread(cv2.samples.findFile('2.png')),
+#        cv2.imread(cv2.samples.findFile('3.png')),
+#        cv2.imread(cv2.samples.findFile('5.png')),
+#        cv2.imread(cv2.samples.findFile('6.png')),]
+#
+## α値を入力
+#print('''0.3~0.8の間から入力
+#-----------------------
+#* Enter alpha [0.0-1.0]: ''')
+#input_alpha = float(input().strip())
+#if 0 <= alpha <= 1:
+#    alpha = input_alpha
+#
+## 特定の表情色・imageと合成
+#for i in range(6):
+#    if src0 is None:
+#        print("Error loading src0")
+#        exit(-1)
+#    elif src[i] is None:
+#        print("Error loading src",i)
+#        exit(-1)
+#    
+#    # 合成
+#    beta = (1.0 - alpha)
+#    dst = cv2.addWeighted(src0, alpha, src[i], beta, 0.0)
+#    cv2.imshow('dst',dst)
+#    cv2.imwrite('img/add',i)
+#    cv2.waitKey(0)
+#
+#cv2.destroyAllWindows()
+#--------------------------------------------------------------------------
+
+# input_img = cv2.imread('img/angry/angry.png')
+        # input_img_2=cv2.imread("user.png")
+        # ret, img = cap.read()
+        # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # #add
+        # add_img = cv.addWeighted(input_img, 0.5, input_img_2, 0.5, 0.0)
+        # frame=paste_image(img, (x, y, x+w, y+h))
